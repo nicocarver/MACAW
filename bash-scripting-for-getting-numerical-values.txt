@@ -1,0 +1,23 @@
+mkdir mouse-data-numerical
+for f in *.png
+do 
+convert $f -format %c histogram:info:mouse-data-numerical/$f.txt 
+done
+cd mouse-data-numerical
+mkdir stripped
+for f in *.txt
+do
+tail -1 $f | head -c10 > stripped/$f
+done
+cd stripped
+cat $(ls | sort -n -k1.6) > just-white-values.txt
+tr -s ' ' < just-white-values.txt > temp.txt
+tr ' ' '\n' < temp.txt > temp2.txt && mv temp2.txt just-white-values.txt
+
+mkdir mouse-data-timestamps
+for f in *.png
+do 
+python -c "import os,time; print time.ctime(os.path.getmtime('$f'))" > mouse-data-timestamps/$f.txt 
+done
+cd mouse-data-timestamps
+cat $(ls | sort -n -k1.6) > combined-timestamps.txt
